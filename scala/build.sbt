@@ -6,5 +6,5 @@ resolvers ++= Seq(
     "twttr" at "http://maven.twttr.com/")
 
 libraryDependencies ++= Seq(
-    "com.twitter" %% "finagle-http" % "6.24.0",
+    "com.twitter" %% "finagle-http" % "6.24.0"
 )
