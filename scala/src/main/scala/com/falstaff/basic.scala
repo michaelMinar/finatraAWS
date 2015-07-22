@@ -1,23 +1,28 @@
 package com.falstaff
 
-import com.twitter.finagle.{Http, Service}
+import com.twitter.finagle.{Httpx, Service}
+import com.twitter.finagle.httpx
 import com.twitter.util.{Await, Future}
 
-/** a remarkably simple service for returning success */
-class simpleService extends Service[HttpRequest, HttpResponse] {
-    def apply(req: HttpRequest): Future[HttpResponse] =
-      Future.value(new DefaultHttpResponse(
-        req.getProtocolVersion, HttpResponseStatus.OK))
-      .onSuccess{ y=> println("success") }
+object Server extends App {
+  val service = new Service[httpx.Request, httpx.Response] {
+    def apply(req: httpx.Request): Future[httpx.Response] =
+      Future.value(
+        httpx.Response(req.version, httpx.Status.Ok)
+      )
+  }
+
+  val server = Httpx.serve(":8080", service)
+  Await.ready(server)
 }
 
-/** 'simple' http server, finagle-style */
-object Server extends App {
-
-  // create an instance of the server
-  val service = new simpleService
-
-  // run the server
-  val server = Http.serve(":8080", service)
-  Await.ready(server)
+object Client extends App {
+  val client: Service[httpx.Request, httpx.Response] = Httpx.newService("www.scala-lang.org:80")
+  val request = httpx.Request(httpx.Method.Get, "/")
+  request.host = "www.scala-lang.org"
+  val response: Future[httpx.Response] = client(request)
+  response.onSuccess { resp: httpx.Response =>
+    println("GET success: " + resp)
+  }
+  Await.ready(response)
 }
