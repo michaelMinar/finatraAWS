@@ -1,10 +1,9 @@
 organization := "com.falstaff"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.6"
 
-resolvers ++= Seq(
-    "twttr" at "http://maven.twttr.com/")
+resolvers += "twitter-repo" at "http://maven.twttr.com"
 
 libraryDependencies ++= Seq(
-    "com.twitter" %% "finagle-http" % "6.24.0"
+  "com.twitter" %% "finagle-httpx" % "6.26.0"
 )
